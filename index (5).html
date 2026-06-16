@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1.0">
+<title>Kinas Family Summer 2025</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; min-height: 1080px; font-family: 'Nunito', sans-serif; background: #fff8f0; color: #2d2d2d; overflow-x: hidden; }
+
+  /* NAV */
+  .nav { display: flex; gap: 10px; align-items: center; padding: 14px 28px; background: #fff; border-bottom: 3px solid #f0e6d3; position: sticky; top: 0; z-index: 100; height: 80px; }
+  .nav-title { font-family: 'Fredoka One', cursive; font-size: 22px; color: #f4833a; margin-right: 16px; white-space: nowrap; }
+  .nav button { font-family: 'Fredoka One', cursive; font-size: 18px; padding: 12px 26px; border-radius: 28px; border: 2.5px solid transparent; cursor: pointer; transition: all 0.18s; background: #f5ede0; color: #7a5c3a; min-width: 140px; min-height: 52px; }
+  .nav button.active, .nav button:hover { background: #f4833a; color: #fff; border-color: #f4833a; }
+
+  /* PAGES */
+  .page { display: none; padding: 24px 36px 48px; }
+  .page.active { display: block; }
+
+  /* PAGE HEADERS */
+  .page-header { text-align: center; margin-bottom: 18px; }
+  .page-header h1 { font-family: 'Fredoka One', cursive; font-size: 52px; line-height: 1.05; }
+  .page-header .bingo-row { font-family: 'Fredoka One', cursive; font-size: 28px; letter-spacing: 14px; margin: 6px 0 2px; }
+
+  /* VERSE BANNER */
+  .verse-banner { border-radius: 14px; padding: 14px 20px; margin-bottom: 14px; border-left: 7px solid; display: flex; flex-direction: column; gap: 3px; }
+  .verse-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; }
+  .verse-text  { font-size: 15px; font-weight: 700; font-style: italic; line-height: 1.45; }
+  .verse-ref   { font-size: 12px; font-weight: 700; opacity: 0.6; }
+  .verse-banner.olivia { background: #fff0f6; border-color: #e8559a; color: #8a1a50; }
+  .verse-banner.jack   { background: #eef6ff; border-color: #3b82f6; color: #1a3a7a; }
+  .verse-banner.green  { background: #f0fdf4; border-color: #22c55e; color: #14532d; }
+
+  /* BINGO */
+  .bingo-layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+  .bingo-sidebar { display: flex; flex-direction: column; gap: 10px; }
+  .bingo-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+  .bingo-col-header { border-radius: 10px; padding: 10px 4px; text-align: center; font-family: 'Fredoka One', cursive; font-size: 16px; color: #fff; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+  .bingo-cell { border-radius: 12px; padding: 10px 8px; min-height: 110px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 700; line-height: 1.35; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; position: relative; user-select: none; white-space: pre-line; }
+  .bingo-cell:active { transform: scale(0.96); }
+  .bingo-cell:hover  { transform: scale(1.03); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+  .bingo-cell.checked { opacity: 0.55; }
+  .bingo-cell.checked::after { content: '★'; position: absolute; top: 5px; right: 8px; font-size: 18px; }
+  .bingo-cell.special { border: 3px solid #f59e0b; }
+  .legend { display: flex; gap: 18px; font-size: 13px; font-weight: 700; color: #777; margin-bottom: 8px; }
+  .legend-dot { width: 16px; height: 16px; border-radius: 4px; border: 2.5px solid; display: inline-block; margin-right: 5px; vertical-align: middle; }
+  .ld-gold { border-color: #f59e0b; background: rgba(245,158,11,0.15); }
+
+  /* Olivia colors */
+  .o-h0{background:#e8559a;} .o-h1{background:#f97316;} .o-h2{background:#22c55e;} .o-h3{background:#a855f7;} .o-h4{background:#06b6d4;} .o-h5{background:#ec4899;}
+  .o-c0{background:#fce7f3;color:#831843;} .o-c1{background:#fff7ed;color:#7c2d12;} .o-c2{background:#f0fdf4;color:#14532d;} .o-c3{background:#faf5ff;color:#581c87;} .o-c4{background:#ecfeff;color:#164e63;} .o-c5{background:#fdf2f8;color:#831843;}
+
+  /* Jack colors */
+  .j-h0{background:#3b82f6;} .j-h1{background:#f59e0b;} .j-h2{background:#10b981;} .j-h3{background:#8b5cf6;} .j-h4{background:#ef4444;} .j-h5{background:#06b6d4;}
+  .j-c0{background:#eff6ff;color:#1e3a8a;} .j-c1{background:#fffbeb;color:#78350f;} .j-c2{background:#ecfdf5;color:#064e3b;} .j-c3{background:#f5f3ff;color:#3b0764;} .j-c4{background:#fef2f2;color:#7f1d1d;} .j-c5{background:#ecfeff;color:#164e63;}
+
+  /* SCHEDULE */
+  .schedule-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .sched-card { border-radius: 18px; padding: 22px 24px; border: 2.5px solid; }
+  .sched-card h3 { font-family: 'Fredoka One', cursive; font-size: 22px; margin-bottom: 6px; }
+  .reset-badge { font-size: 11px; color: #aaa; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; }
+  .task-list { list-style: none; }
+  .task-list li { display: flex; align-items: flex-start; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.07); font-size: 15px; font-weight: 600; }
+  .task-list li:last-child { border-bottom: none; }
+  .task-check { width: 26px; height: 26px; border-radius: 7px; border: 2.5px solid; flex-shrink: 0; margin-top: 1px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .task-check.done { color: #fff; }
+  .task-check.done::after { content: '✓'; }
+  .o-card { background: #fff0f8; border-color: #f9a8d4; }
+  .o-card h3 { color: #be185d; }
+  .o-chk { border-color: #ec4899; }
+  .o-chk.done { background: #ec4899; }
+  .j-card { background: #eff6ff; border-color: #93c5fd; }
+  .j-card h3 { color: #1d4ed8; }
+  .j-chk { border-color: #3b82f6; }
+  .j-chk.done { background: #3b82f6; }
+
+  /* ALLOWANCE */
+  .allowance-widget { border-radius: 16px; padding: 16px 20px; margin-bottom: 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .allowance-widget.olivia-aw { background: #fce7f3; border: 2px solid #f9a8d4; }
+  .allowance-widget.jack-aw   { background: #dbeafe; border: 2px solid #93c5fd; }
+  .allowance-widget label { font-family: 'Fredoka One', cursive; font-size: 18px; }
+  .allowance-input { font-family: 'Fredoka One', cursive; font-size: 22px; width: 90px; padding: 6px 12px; border-radius: 10px; border: 2px solid; text-align: center; background: #fff; outline: none; }
+  .o-aw-input { border-color: #ec4899; color: #be185d; }
+  .j-aw-input { border-color: #3b82f6; color: #1d4ed8; }
+  .allowance-status { font-size: 15px; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-left: auto; }
+  .aw-earned  { background: #d1fae5; color: #065f46; }
+  .aw-pending { background: #fef3c7; color: #92400e; }
+
+  /* STAR CALENDAR */
+  .star-calendar { margin-top: 20px; }
+  .star-calendar h3 { font-family: 'Fredoka One', cursive; font-size: 20px; margin-bottom: 12px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-day-header { text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #aaa; padding: 4px 0; }
+  .cal-day { border-radius: 10px; min-height: 56px; padding: 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; border: 2px solid #f0e6d3; background: #fff; position: relative; }
+  .cal-day.today { border-color: #f4833a; background: #fff8f0; }
+  .cal-day.other-month { opacity: 0.35; }
+  .cal-day-num { font-size: 11px; font-weight: 800; color: #aaa; align-self: flex-start; padding: 1px 3px; }
+  .cal-day.today .cal-day-num { color: #f4833a; }
+  .cal-star { font-size: 22px; line-height: 1; }
+  .cal-payday { font-size: 9px; font-weight: 800; color: #16a34a; background: #d1fae5; border-radius: 4px; padding: 1px 4px; position: absolute; bottom: 3px; }
+
+  /* MEM / LEADER */
+  .mem-card { border-radius: 14px; padding: 16px 20px; border: 2.5px dashed; margin-top: 16px; }
+  .mem-card h3 { font-family: 'Fredoka One', cursive; font-size: 18px; margin-bottom: 8px; }
+  .mem-verse { font-size: 14px; font-weight: 700; font-style: italic; line-height: 1.55; }
+  .mem-ref   { font-size: 12px; font-weight: 700; opacity: 0.6; margin-top: 5px; }
+  .o-mem { background: #fdf2f8; border-color: #f0abcf; color: #831843; }
+  .j-mem { background: #eff6ff; border-color: #93c5fd; color: #1e3a8a; }
+  .leader-card { border-radius: 14px; padding: 16px 20px; background: #f0fdf4; border: 2px dashed #86efac; color: #14532d; margin-top: 12px; }
+  .leader-card h3 { font-family: 'Fredoka One', cursive; font-size: 17px; margin-bottom: 8px; }
+  .leader-verse { font-size: 13px; font-style: italic; font-weight: 700; margin-bottom: 5px; line-height: 1.4; }
+
+  /* PRIZES */
+  .prizes-layout { max-width: 1400px; margin: 0 auto; }
+  .prize-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 32px; }
+  .prize-card { background: #fff; border-radius: 18px; padding: 24px 16px; border: 2.5px solid #f0e6d3; font-size: 16px; font-weight: 700; color: #5a3a1a; text-align: center; }
+  .prize-icon { font-size: 38px; margin-bottom: 10px; }
+  .grand-card { background: #fef3c7; border-radius: 22px; padding: 32px 28px; border: 3.5px solid #f59e0b; text-align: center; }
+  .grand-card .tent { font-size: 64px; margin-bottom: 10px; }
+  .grand-card h2 { font-family: 'Fredoka One', cursive; font-size: 36px; color: #78350f; margin-bottom: 6px; }
+  .grand-card p  { font-family: 'Fredoka One', cursive; font-size: 28px; color: #92400e; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">☀️ Kinas Summer 2025</div>
+  <button class="active" onclick="showPage('olivia-bingo',this)">🌸 Olivia's Bingo</button>
+  <button onclick="showPage('jack-bingo',this)">⚡ Jack's Bingo</button>
+  <button onclick="showPage('olivia-schedule',this)">📋 Olivia's Schedule</button>
+  <button onclick="showPage('jack-schedule',this)">📋 Jack's Schedule</button>
+  <button onclick="showPage('prizes',this)">🏆 Prizes</button>
+</nav>
+
+<!-- OLIVIA BINGO -->
+<div id="olivia-bingo" class="page active">
+  <div class="page-header">
+    <h1 style="color:#be185d;">Olivia's Summer Bingo</h1>
+    <div class="bingo-row" style="color:#ec4899;">B - I - N - G - O - !</div>
+  </div>
+  <div class="bingo-layout">
+    <div class="bingo-sidebar">
+      <div class="verse-banner olivia">
+        <div class="verse-label">📖 Memory Verse</div>
+        <div class="verse-text">"Do nothing out of selfish ambition or vain conceit. Rather, in humility value others above yourselves."</div>
+        <div class="verse-ref">Philippians 2:3–4</div>
+      </div>
+      <div class="verse-banner green">
+        <div class="verse-label">📖 Leadership Verse</div>
+        <div class="verse-text">"The greatest among you will be your servant."</div>
+        <div class="verse-ref">Matthew 23:11</div>
+      </div>
+      <div class="legend"><span><span class="legend-dot ld-gold"></span>Extra challenge</span></div>
+      <div style="font-size:13px;color:#aaa;font-weight:700;">Tap a square to mark it ★</div>
+    </div>
+    <div class="bingo-grid" id="olivia-grid"></div>
+  </div>
+</div>
+
+<!-- JACK BINGO -->
+<div id="jack-bingo" class="page">
+  <div class="page-header">
+    <h1 style="color:#1d4ed8;">Jack's Summer Bingo</h1>
+    <div class="bingo-row" style="color:#3b82f6;">B - I - N - G - O - !</div>
+  </div>
+  <div class="bingo-layout">
+    <div class="bingo-sidebar">
+      <div class="verse-banner jack">
+        <div class="verse-label">📖 Memory Verse</div>
+        <div class="verse-text">"Love one another. As I have loved you, so you must love one another."</div>
+        <div class="verse-ref">John 13:34</div>
+      </div>
+      <div class="legend"><span><span class="legend-dot ld-gold"></span>Extra challenge</span></div>
+      <div style="font-size:13px;color:#aaa;font-weight:700;">Tap a square to mark it ★</div>
+    </div>
+    <div class="bingo-grid" id="jack-grid"></div>
+  </div>
+</div>
+
+<!-- OLIVIA SCHEDULE -->
+<div id="olivia-schedule" class="page">
+  <div class="page-header"><h1 style="color:#be185d;">🌸 Olivia's Schedule</h1></div>
+  <div class="allowance-widget olivia-aw">
+    <label>💰 Weekly Allowance:</label>
+    <span style="font-family:'Fredoka One',cursive;font-size:22px;color:#be185d;">$</span>
+    <input id="o-allowance-input" class="allowance-input o-aw-input" type="number" min="0" max="999" step="0.50" value="7.00" onchange="saveAllowance('olivia',this.value)" />
+    <span style="font-size:14px;font-weight:700;color:#888;">/ week</span>
+    <div id="o-allowance-status" class="allowance-status aw-pending">⏳ Earn all 7 stars this week!</div>
+  </div>
+  <div class="verse-banner olivia" style="margin-bottom:18px;">
+    <div class="verse-label">📖 Leadership Verse</div>
+    <div class="verse-text">"Whoever wants to become great among you must be your servant."</div>
+    <div class="verse-ref">Mark 10:43</div>
+  </div>
+  <div class="schedule-layout">
+    <div class="sched-card o-card">
+      <h3>☀️ Daily Habits</h3>
+      <div class="reset-badge">↺ Resets every morning</div>
+      <ul class="task-list" id="o-daily"></ul>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="sched-card o-card">
+        <h3>📅 Weekly Goals</h3>
+        <div class="reset-badge">↺ Resets every Monday</div>
+        <ul class="task-list" id="o-weekly"></ul>
+      </div>
+      <div class="sched-card o-card">
+        <h3>🧹 Chores</h3>
+        <div class="reset-badge">↺ Resets every morning</div>
+        <ul class="task-list" id="o-chores"></ul>
+      </div>
+    </div>
+  </div>
+  <div class="star-calendar">
+    <h3 style="color:#be185d;">⭐ Olivia's Star Calendar</h3>
+    <div class="cal-grid" id="o-calendar"></div>
+  </div>
+  <div class="mem-card o-mem">
+    <h3>📖 Scripture Memory Goal</h3>
+    <div class="mem-verse">"Do nothing out of selfish ambition or vain conceit. Rather, in humility value others above yourselves."</div>
+    <div class="mem-ref">Philippians 2:3–4 · Recite from memory to earn your Spiritual bingo square!</div>
+  </div>
+  <div class="leader-card">
+    <h3>📖 Leadership Challenge Verses</h3>
+    <div class="leader-verse">"Pride goes before destruction, a haughty spirit before a fall." — Proverbs 16:18</div>
+    <div class="leader-verse">"When pride comes, then comes disgrace, but with humility comes wisdom." — Proverbs 11:2</div>
+    <div class="leader-verse">"Do not think of yourself more highly than you ought." — Romans 12:3</div>
+  </div>
+</div>
+
+<!-- JACK SCHEDULE -->
+<div id="jack-schedule" class="page">
+  <div class="page-header"><h1 style="color:#1d4ed8;">⚡ Jack's Schedule</h1></div>
+  <div class="allowance-widget jack-aw">
+    <label>💰 Weekly Allowance:</label>
+    <span style="font-family:'Fredoka One',cursive;font-size:22px;color:#1d4ed8;">$</span>
+    <input id="j-allowance-input" class="allowance-input j-aw-input" type="number" min="0" max="999" step="0.50" value="4.00" onchange="saveAllowance('jack',this.value)" />
+    <span style="font-size:14px;font-weight:700;color:#888;">/ week</span>
+    <div id="j-allowance-status" class="allowance-status aw-pending">⏳ Earn all 7 stars this week!</div>
+  </div>
+  <div class="verse-banner jack" style="margin-bottom:18px;">
+    <div class="verse-label">📖 Memory Verse</div>
+    <div class="verse-text">"Love one another. As I have loved you, so you must love one another."</div>
+    <div class="verse-ref">John 13:34</div>
+  </div>
+  <div class="schedule-layout">
+    <div class="sched-card j-card">
+      <h3>☀️ Daily Habits</h3>
+      <div class="reset-badge">↺ Resets every morning</div>
+      <ul class="task-list" id="j-daily"></ul>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="sched-card j-card">
+        <h3>📅 Weekly Goals</h3>
+        <div class="reset-badge">↺ Resets every Monday</div>
+        <ul class="task-list" id="j-weekly"></ul>
+      </div>
+      <div class="sched-card j-card">
+        <h3>🧹 Chores</h3>
+        <div class="reset-badge">↺ Resets every morning</div>
+        <ul class="task-list" id="j-chores"></ul>
+      </div>
+    </div>
+  </div>
+  <div class="star-calendar">
+    <h3 style="color:#1d4ed8;">⭐ Jack's Star Calendar</h3>
+    <div class="cal-grid" id="j-calendar"></div>
+  </div>
+  <div class="mem-card j-mem">
+    <h3>📖 Scripture Memory Goal</h3>
+    <div class="mem-verse">"Love one another. As I have loved you, so you must love one another."</div>
+    <div class="mem-ref">John 13:34 · Recite from memory to earn your Spiritual bingo square!</div>
+  </div>
+</div>
+
+<!-- PRIZES -->
+<div id="prizes" class="page">
+  <div class="page-header">
+    <h1 style="color:#d97706;">🏆 Summer Prizes</h1>
+    <div style="font-size:14px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Get a BINGO to earn a prize!</div>
+  </div>
+  <div class="prizes-layout">
+    <div class="prize-grid" id="prize-grid"></div>
+    <div class="grand-card">
+      <div class="tent">🏕️</div>
+      <h2>Grand Prize</h2>
+      <p>A Fall Camping Trip!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── BINGO DATA ─────────────────────────────────────────────────────────────
+var OLIVIA_CELLS = [
+  {t:"Memorize Phil. 2:3-4 & recite to a parent",c:0,s:1},
+  {t:"Ask a friend what they need prayer for, then pray",c:0},
+  {t:"Illustrate & present a Bible story to the family",c:0,s:1},
+  {t:"Look up a scripture about pride, read aloud & explain it",c:0,s:1},
+  {t:"Read 3 Proverbs & tell mom what each one means",c:0,s:1},
+  {t:"3 prayer journal entries (gratitude + prayer request)",c:0,s:1},
+  {t:"Jump rope 30x without stopping",c:1},
+  {t:"Hula hoop 10x",c:1},
+  {t:"Ride bike 2 miles",c:1,s:1},
+  {t:"Throw & catch frisbee 20x in a row",c:1,s:1},
+  {t:"Make a basket in hoop 3x",c:1},
+  {t:"Play 4 square as a family",c:1},
+  {t:"Make & mail cards for cousin",c:2},
+  {t:"Pick up trash at a park (20 min)",c:2,s:1},
+  {t:"Donate toys you've outgrown (min. 5)",c:2},
+  {t:"Use own money to buy a gift for Jack",c:2},
+  {t:"Plant flowers for the house",c:2},
+  {t:"Make family dinner start to finish",c:2,s:1},
+  {t:"Sew a piece of clothing or doll outfit",c:3,s:1},
+  {t:"Put on a puppet show, full story",c:3,s:1},
+  {t:"Learn a simple song on an instrument",c:3},
+  {t:"Cat's cradle / Jacob's ladder",c:3},
+  {t:"Make a friendship bracelet for someone else",c:3},
+  {t:"Create a driveway mural",c:3},
+  {t:"Interview a grandparent, write/draw what you learn",c:4,s:1},
+  {t:"Family indoor campout",c:4},
+  {t:"Invite a friend over & serve them first",c:4,s:1},
+  {t:"Help Jack complete a bingo square",c:4,s:1},
+  {t:"Mommy/Livi movie night in bed",c:4},
+  {t:"Dad fishing trip",c:4},
+  {t:"Catch fireflies",c:5},
+  {t:"Nature scavenger hunt",c:5},
+  {t:"Feed ducks/fish",c:5},
+  {t:"Memorize address & phone numbers",c:5},
+  {t:"Make ice cream",c:5},
+  {t:"Peach/berry picking",c:5}
+];
+
+var JACK_CELLS = [
+  {t:"Memorize John 13:34 & recite to a parent",c:0,s:1},
+  {t:"Pray for a friend by name every day for a week",c:0},
+  {t:"Tell the story of David & Goliath in your own words",c:0},
+  {t:"Tell the story of Noah's Ark in your own words",c:0},
+  {t:"Tell the story of Daniel in the lion's den",c:0},
+  {t:"Lead a worship chorus for the family while Daddy plays",c:0,s:1},
+  {t:"Ride bike without training wheels",c:1},
+  {t:"Catch a ball 10x in a row",c:1},
+  {t:"Throw 15-20 ft",c:1},
+  {t:"Pump a swing by yourself",c:1},
+  {t:"One-legged yoga pose for 1 min",c:1,s:1},
+  {t:"Swim unassisted 10 ft",c:1,s:1},
+  {t:"Make & mail cards for cousin",c:2},
+  {t:"Pick up trash at a park (15 min)",c:2},
+  {t:"Donate 5 toys",c:2},
+  {t:"Use money to buy a gift for Olivia",c:2},
+  {t:"Set the table for family dinner",c:2},
+  {t:"Make cookies for someone outside our family",c:2},
+  {t:"Build a fort",c:3},
+  {t:"Make a paper airplane by himself",c:3},
+  {t:"Make a rocket/car/castle from cardboard",c:3},
+  {t:"Create an animal out of craft supplies",c:3},
+  {t:"Paint shells/rocks & leave them around the park",c:3},
+  {t:"Make PB&J or cereal breakfast by himself",c:3},
+  {t:"Family game night",c:4},
+  {t:"Play 4 square as a family",c:4},
+  {t:"Family puzzle",c:4},
+  {t:"Family sunset beach walk",c:4},
+  {t:"Mommy/Jack movie in bed or Daddy fishing",c:4},
+  {t:"Family indoor campout",c:4},
+  {t:"Catch fireflies",c:5},
+  {t:"Nature scavenger hunt",c:5},
+  {t:"Feed ducks/fish",c:5},
+  {t:"Bonfire & s'mores",c:5},
+  {t:"Make ice cream",c:5},
+  {t:"Peach picking",c:5}
+];
+
+var COL_HEADERS = ['Spiritual','Physical','Service','Creation','Relational','Fun'];
+var O_H = ['o-h0','o-h1','o-h2','o-h3','o-h4','o-h5'];
+var O_C = ['o-c0','o-c1','o-c2','o-c3','o-c4','o-c5'];
+var J_H = ['j-h0','j-h1','j-h2','j-h3','j-h4','j-h5'];
+var J_C = ['j-c0','j-c1','j-c2','j-c3','j-c4','j-c5'];
+
+var O_DAILY  = ["Dress herself","Family devotional","15 min summer workbook","15 min musical instrument","Make bed","Dirty clothes in hamper","Pick up room & toys","Pick out clothes for tomorrow","Clean up after meals","Bathe & brush teeth"];
+var O_WEEKLY = ["Fold & put away laundry","Empty small trash cans","Pack bag for next day"];
+var O_CHORES = ["Set the table"];
+var J_DAILY  = ["Dress himself","Make bed","Family devotional","15 min summer workbook","Dirty clothes in hamper","Lay out clothes for tomorrow","Pick up room & toys","Clean up after meals","Bathe & brush teeth"];
+var J_WEEKLY = ["Put away laundry","Vacuum a room"];
+var J_CHORES = ["Bring mail inside","Feed fish"];
+
+var O_TOTAL = O_DAILY.length + O_CHORES.length;
+var J_TOTAL = J_DAILY.length + J_CHORES.length;
+
+var PRIZES = [
+  {icon:"🎢",name:"Busch Gardens"},{icon:"🌊",name:"Ocean Breeze"},
+  {icon:"🛏️",name:"Sleep with Mommy"},{icon:"🍬",name:"Candy Store pick"},
+  {icon:"⚾",name:"Tides Game"},{icon:"🧗",name:"Rock Climbing Gym"},
+  {icon:"🤸",name:"Trampoline Park"},{icon:"🎬",name:"Movies"},
+  {icon:"🍰",name:"Special Dessert"}
+];
+
+// ── DATE HELPERS ────────────────────────────────────────────────────────────
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function weekStr() {
+  var d = new Date();
+  var jan1 = new Date(d.getFullYear(),0,1);
+  var wk = Math.ceil(((d - jan1)/86400000 + jan1.getDay() + 1)/7);
+  return d.getFullYear() + '-W' + wk;
+}
+
+// ── STORAGE ─────────────────────────────────────────────────────────────────
+function load(key) { try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { return {}; } }
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+// ── ALLOWANCE ───────────────────────────────────────────────────────────────
+function saveAllowance(kid, val) { localStorage.setItem('aw_'+kid, val); }
+function loadAllowance(kid, def) { return parseFloat(localStorage.getItem('aw_'+kid) || def); }
+
+function updateAllowanceStatus(kid) {
+  var wk = weekStr();
+  var stars = load('stars_'+kid);
+  var count = 0;
+  Object.keys(stars).forEach(function(ds) {
+    if (!stars[ds]) return;
+    var d = new Date(ds);
+    var jan1 = new Date(d.getFullYear(),0,1);
+    var w = Math.ceil(((d-jan1)/86400000 + jan1.getDay()+1)/7);
+    var wkey = d.getFullYear()+'-W'+w;
+    if (wkey === wk) count++;
+  });
+  var amt = loadAllowance(kid, kid==='olivia'?7:4).toFixed(2);
+  var el = document.getElementById((kid==='olivia'?'o':'j')+'-allowance-status');
+  if (!el) return;
+  if (count >= 7) {
+    el.className = 'allowance-status aw-earned';
+    el.textContent = '🎉 $'+amt+' earned this Friday!';
+  } else {
+    el.className = 'allowance-status aw-pending';
+    el.textContent = '⏳ '+count+'/7 stars — keep going!';
+  }
+}
+
+// ── STARS ───────────────────────────────────────────────────────────────────
+function checkAllDone(kid, total) {
+  var today = todayStr();
+  var prefix = kid==='olivia' ? 'o' : 'j';
+  var done = 0;
+  ['daily','chores'].forEach(function(type) {
+    var key = prefix+'-'+type+'__'+today;
+    var s = load(key);
+    Object.values(s).forEach(function(v){ if(v) done++; });
+  });
+  var stars = load('stars_'+kid);
+  if (done >= total) {
+    if (!stars[today]) {
+      stars[today] = true;
+      save('stars_'+kid, stars);
+      showCelebration(kid);
+    }
+  } else {
+    if (stars[today]) {
+      stars[today] = false;
+      save('stars_'+kid, stars);
+    }
+  }
+  updateAllowanceStatus(kid);
+  renderCalendar(prefix, kid);
+}
+
+function showCelebration(kid) {
+  var color = kid==='olivia' ? '#be185d' : '#1d4ed8';
+  var name  = kid==='olivia' ? 'Olivia' : 'Jack';
+  var el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:'+color+';color:white;font-family:"Fredoka One",cursive;font-size:48px;padding:40px 60px;border-radius:24px;z-index:9998;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);';
+  el.innerHTML = '⭐ Amazing, '+name+'! ⭐<br><span style="font-size:24px;">All chores done today!</span>';
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 2800);
+}
+
+// ── BINGO GRID ───────────────────────────────────────────────────────────────
+function renderGrid(gridId, cells, hCls, cCls) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  // group by column
+  var byCol = [[],[],[],[],[],[]];
+  for (var i=0; i<cells.length; i++) { byCol[cells[i].c].push(cells[i]); }
+
+  // load stored checks
+  var stored = load(gridId+'__checks');
+
+  // headers
+  for (var ci=0; ci<6; ci++) {
+    var h = document.createElement('div');
+    h.className = 'bingo-col-header ' + hCls[ci];
+    h.textContent = COL_HEADERS[ci];
+    grid.appendChild(h);
+  }
+
+  // cells row by row
+  for (var row=0; row<6; row++) {
+    for (var col=0; col<6; col++) {
+      var cell = byCol[col][row];
+      var key = col+'-'+row;
+      var div = document.createElement('div');
+      div.className = 'bingo-cell ' + cCls[col] + (cell && cell.s ? ' special' : '');
+      div.textContent = cell ? cell.t : '';
+      if (stored[key]) div.classList.add('checked');
+      // closure to capture key and gridId
+      (function(k, gId) {
+        div.addEventListener('click', function() {
+          div.classList.toggle('checked');
+          var s = load(gId+'__checks');
+          s[k] = div.classList.contains('checked');
+          save(gId+'__checks', s);
+        });
+      })(key, gridId);
+      grid.appendChild(div);
+    }
+  }
+}
+
+// ── TASKS ────────────────────────────────────────────────────────────────────
+function renderTasks(listId, items, chkCls, reset, kid, total) {
+  var ul = document.getElementById(listId);
+  if (!ul) return;
+  ul.innerHTML = '';
+  var storeKey = listId + '__' + (reset==='weekly' ? weekStr() : todayStr());
+  var stored = load(storeKey);
+
+  for (var i=0; i<items.length; i++) {
+    var li = document.createElement('li');
+    var chk = document.createElement('div');
+    chk.className = 'task-check ' + chkCls + (stored[i] ? ' done' : '');
+    var span = document.createElement('span');
+    span.textContent = items[i];
+    li.appendChild(chk);
+    li.appendChild(span);
+    ul.appendChild(li);
+    // closure
+    (function(idx, sk, k, tot) {
+      chk.addEventListener('click', function() {
+        chk.classList.toggle('done');
+        var s = load(sk);
+        s[idx] = chk.classList.contains('done');
+        save(sk, s);
+        if (k && tot) checkAllDone(k, tot);
+      });
+    })(i, storeKey, kid, total);
+  }
+}
+
+// ── CALENDAR ─────────────────────────────────────────────────────────────────
+function renderCalendar(prefix, kid) {
+  var container = document.getElementById(prefix+'-calendar');
+  if (!container) return;
+  container.innerHTML = '';
+
+  var stars = load('stars_'+kid);
+  var now = new Date();
+  var year = now.getFullYear();
+  var month = now.getMonth();
+  var todayS = todayStr();
+
+  // day headers
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d) {
+    var h = document.createElement('div');
+    h.className = 'cal-day-header';
+    h.textContent = d;
+    container.appendChild(h);
+  });
+
+  // find payday fridays
+  var paydayFridays = {};
+  var daysInMonth = new Date(year, month+1, 0).getDate();
+  for (var d=1; d<=daysInMonth; d++) {
+    var date = new Date(year, month, d);
+    if (date.getDay() === 1) { // monday
+      var weekStars = 0;
+      for (var i=0; i<7; i++) {
+        var dd = new Date(year, month, d+i);
+        var ds = dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0');
+        if (stars[ds]) weekStars++;
+      }
+      if (weekStars >= 7) {
+        var fri = new Date(year, month, d+4);
+        var fs = fri.getFullYear()+'-'+String(fri.getMonth()+1).padStart(2,'0')+'-'+String(fri.getDate()).padStart(2,'0');
+        paydayFridays[fs] = true;
+      }
+    }
+  }
+
+  var firstDay = new Date(year, month, 1).getDay();
+  var prevDays = new Date(year, month, 0).getDate();
+
+  // prev month padding
+  for (var i=0; i<firstDay; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    cell.innerHTML = '<span class="cal-day-num">'+(prevDays-firstDay+1+i)+'</span>';
+    container.appendChild(cell);
+  }
+
+  // current month
+  for (var d=1; d<=daysInMonth; d++) {
+    var ds = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var cell = document.createElement('div');
+    cell.className = 'cal-day' + (ds===todayS?' today':'');
+    cell.innerHTML = '<span class="cal-day-num">'+d+'</span>';
+    if (stars[ds]) {
+      var star = document.createElement('div');
+      star.className = 'cal-star';
+      star.textContent = '⭐';
+      cell.appendChild(star);
+    }
+    if (paydayFridays[ds]) {
+      var badge = document.createElement('div');
+      badge.className = 'cal-payday';
+      badge.textContent = '💵 Payday!';
+      cell.appendChild(badge);
+    }
+    container.appendChild(cell);
+  }
+
+  // next month padding
+  var total = firstDay + daysInMonth;
+  var rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (var i=1; i<=rem; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    cell.innerHTML = '<span class="cal-day-num">'+i+'</span>';
+    container.appendChild(cell);
+  }
+}
+
+// ── PRIZES ───────────────────────────────────────────────────────────────────
+function renderPrizes() {
+  var grid = document.getElementById('prize-grid');
+  if (!grid) return;
+  PRIZES.forEach(function(p) {
+    var d = document.createElement('div');
+    d.className = 'prize-card';
+    d.innerHTML = '<div class="prize-icon">'+p.icon+'</div>'+p.name;
+    grid.appendChild(d);
+  });
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  document.getElementById('o-allowance-input').value = loadAllowance('olivia',7).toFixed(2);
+  document.getElementById('j-allowance-input').value = loadAllowance('jack',4).toFixed(2);
+
+  renderGrid('olivia-grid', OLIVIA_CELLS, O_H, O_C);
+  renderGrid('jack-grid',   JACK_CELLS,   J_H, J_C);
+
+  renderTasks('o-daily',  O_DAILY,  'o-chk', 'daily',  'olivia', O_TOTAL);
+  renderTasks('o-weekly', O_WEEKLY, 'o-chk', 'weekly', null, null);
+  renderTasks('o-chores', O_CHORES, 'o-chk', 'daily',  'olivia', O_TOTAL);
+  renderTasks('j-daily',  J_DAILY,  'j-chk', 'daily',  'jack',   J_TOTAL);
+  renderTasks('j-weekly', J_WEEKLY, 'j-chk', 'weekly', null, null);
+  renderTasks('j-chores', J_CHORES, 'j-chk', 'daily',  'jack',   J_TOTAL);
+
+  renderCalendar('o','olivia');
+  renderCalendar('j','jack');
+  updateAllowanceStatus('olivia');
+  updateAllowanceStatus('jack');
+  renderPrizes();
+}
+
+init();
+</script>
+</body>
+</html>
