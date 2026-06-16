@@ -479,16 +479,27 @@
 
 <script>
 // ══════════════════════════════════════════════════════
-// PASSWORD
+// PASSWORD — remembers login permanently on this device
 // ══════════════════════════════════════════════════════
 const PASSWORD = 'Livijack1523';
+const AUTH_KEY = 'kinas_auth_v1';
+
+function unlock() {
+  document.getElementById('pw-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  init();
+}
+
+// Auto-unlock if already authenticated on this device
+if (localStorage.getItem(AUTH_KEY) === 'true') {
+  unlock();
+}
 
 function checkPassword() {
   const val = document.getElementById('pw-input').value;
   if (val === PASSWORD) {
-    document.getElementById('pw-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    init();
+    localStorage.setItem(AUTH_KEY, 'true'); // remember forever on this device
+    unlock();
   } else {
     document.getElementById('pw-error').textContent = 'Incorrect password. Try again!';
     document.getElementById('pw-input').value = '';
