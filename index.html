@@ -327,13 +327,13 @@ function renderTasks(lid,items,cls,reset,kid,total){
     chk.className='task-check '+cls+(stored[i]?' done':'');
     span.textContent=items[i];
     li.appendChild(chk);li.appendChild(span);ul.appendChild(li);
-    (function(idx,skey,k,tot){
-      chk.addEventListener('click',function(){
-        chk.classList.toggle('done');
-        var s=sg(skey)||{};s[idx]=chk.classList.contains('done');ss(skey,s);
+    (function(idx,skey,k,tot,box){
+      box.addEventListener('click',function(){
+        box.classList.toggle('done');
+        var s=sg(skey)||{};s[idx]=box.classList.contains('done');ss(skey,s);
         if(k&&tot)checkDone(k,tot);
       });
-    })(i,sk,kid,total);
+    })(i,sk,kid,total,chk);
   }
 }
 
