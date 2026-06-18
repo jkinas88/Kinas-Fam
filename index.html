@@ -74,6 +74,17 @@
   .cal-day.today .cal-day-num { color: #f4833a; }
   .cal-star { font-size: 22px; line-height: 1; }
   .cal-payday { font-size: 9px; font-weight: 800; color: #16a34a; background: #d1fae5; border-radius: 4px; padding: 1px 4px; position: absolute; bottom: 3px; }
+  .cal-day.clickable { cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+  .cal-day.clickable:hover { border-color: #f4833a; transform: scale(1.06); }
+  .cal-day.viewing { border-color: #f4833a !important; background: #fff3e8 !important; box-shadow: 0 0 0 3px rgba(244,131,58,0.3); }
+  .date-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 10px 18px; border-radius: 14px; background: #fff; border: 2.5px solid #f0e6d3; }
+  .date-nav.past { background: #fffbeb; border-color: #fcd34d; }
+  .date-nav-label { font-family: 'Fredoka One', cursive; font-size: 19px; flex: 1; text-align: center; color: #5a3a1a; }
+  .date-nav-label.past { color: #92400e; }
+  .date-nav button { font-family: 'Fredoka One', cursive; font-size: 15px; padding: 7px 16px; border-radius: 20px; border: 2px solid; cursor: pointer; background: #f5ede0; color: #7a5c3a; border-color: #e0c8a8; transition: background 0.15s; }
+  .date-nav button:hover { background: #f4833a; color: #fff; border-color: #f4833a; }
+  .date-nav .today-btn { background: #f4833a; color: #fff; border-color: #f4833a; }
+  .date-nav .today-btn:hover { background: #e0722a; border-color: #e0722a; }
   .mem-card { border-radius: 14px; padding: 16px 20px; border: 2.5px dashed; margin-top: 16px; }
   .mem-card h3 { font-family: 'Fredoka One', cursive; font-size: 18px; margin-bottom: 8px; }
   .mem-verse { font-size: 14px; font-weight: 700; font-style: italic; line-height: 1.55; }
@@ -160,6 +171,7 @@
     <div class="verse-text">"Whoever wants to become great among you must be your servant."</div>
     <div class="verse-ref">Mark 10:43</div>
   </div>
+  <div id="o-date-nav" class="date-nav"></div>
   <div class="schedule-layout">
     <div class="sched-card o-card">
       <h3>Daily Habits</h3><div class="reset-badge">Resets every morning</div>
@@ -198,6 +210,7 @@
     <div class="verse-text">"Love one another. As I have loved you, so you must love one another."</div>
     <div class="verse-ref">John 13:34</div>
   </div>
+  <div id="j-date-nav" class="date-nav"></div>
   <div class="schedule-layout">
     <div class="sched-card j-card">
       <h3>Daily Habits</h3><div class="reset-badge">Resets every morning</div>
@@ -259,12 +272,45 @@ var PZ = [{icon:"&#127906;",name:"Busch Gardens"},{icon:"&#127754;",name:"Ocean 
 function pad(n){return String(n).padStart(2,'0');}
 function tday(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function wkey(){var d=new Date(),j=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil(((d-j)/864e5+j.getDay()+1)/7);}
+function wkeyFor(ds){var d=new Date(ds+'T00:00:00'),j=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil(((d-j)/864e5+j.getDay()+1)/7);}
+function dsAdd(ds,n){var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDate(ds){var d=new Date(ds+'T00:00:00');return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
+
+var viewDate={olivia:tday(),jack:tday()};
+
+function setViewDate(kid,ds){
+  var td=tday();
+  if(ds>td)ds=td;
+  viewDate[kid]=ds;
+  var p=kid==='olivia'?'o':'j';
+  renderDateNav(p,kid);
+  renderTasksForKid(kid);
+  renderCal(p,kid);
+}
+
+function renderDateNav(p,kid){
+  var nav=document.getElementById(p+'-date-nav');if(!nav)return;
+  var ds=viewDate[kid],td=tday(),isPast=ds!==td;
+  nav.className='date-nav'+(isPast?' past':'');
+  var prevDs=dsAdd(ds,-1),nextDs=dsAdd(ds,1);
+  var label=isPast?'📅 Viewing: '+fmtDate(ds):'📅 Today — '+fmtDate(td);
+  nav.innerHTML='';
+  var prev=document.createElement('button');prev.textContent='← '+fmtDate(prevDs).split(',')[0].split(' ').slice(0,2).join(' ');
+  prev.onclick=function(){setViewDate(kid,prevDs);};
+  nav.appendChild(prev);
+  var lbl=document.createElement('div');lbl.className='date-nav-label'+(isPast?' past':'');lbl.textContent=label;
+  nav.appendChild(lbl);
+  if(isPast){
+    if(nextDs<=td){var nxt=document.createElement('button');nxt.textContent=fmtDate(nextDs).split(',')[0].split(' ').slice(0,2).join(' ')+' →';nxt.onclick=function(){setViewDate(kid,nextDs);};nav.appendChild(nxt);}
+    var tb=document.createElement('button');tb.className='today-btn';tb.textContent='Back to Today';tb.onclick=function(){setViewDate(kid,td);};nav.appendChild(tb);
+  }
+}
 
 function saveAllowance(kid,v){ss('aw_'+kid,parseFloat(v));}
 function loadAllowance(kid,def){var v=sg('aw_'+kid);return v!==null?v:def;}
 function updateAW(kid){
   var wk=wkey(),stars=sg('stars_'+kid)||{},count=0;
-  Object.keys(stars).forEach(function(ds){if(!stars[ds])return;var d=new Date(ds),j=new Date(d.getFullYear(),0,1);if(d.getFullYear()+'-W'+Math.ceil(((d-j)/864e5+j.getDay()+1)/7)===wk)count++;});
+  Object.keys(stars).forEach(function(ds){if(!stars[ds])return;var d=new Date(ds+'T00:00:00'),j=new Date(d.getFullYear(),0,1);if(d.getFullYear()+'-W'+Math.ceil(((d-j)/864e5+j.getDay()+1)/7)===wk)count++;});
   var amt=loadAllowance(kid,kid==='olivia'?7:4).toFixed(2);
   var el=document.getElementById((kid==='olivia'?'o':'j')+'-allowance-status');
   if(!el)return;
@@ -272,12 +318,13 @@ function updateAW(kid){
   else{el.className='allowance-status aw-pending';el.textContent=count+'/7 stars - keep going!';}
 }
 
-function checkDone(kid,total){
-  var today=tday(),p=kid==='olivia'?'o':'j',done=0;
-  [p+'-daily',p+'-chores'].forEach(function(id){var s=sg(id+'__'+today)||{};Object.keys(s).forEach(function(k){if(s[k])done++;});});
+function checkDone(kid,total,ds){
+  ds=ds||tday();
+  var p=kid==='olivia'?'o':'j',done=0;
+  [p+'-daily',p+'-chores'].forEach(function(id){var s=sg(id+'__'+ds)||{};Object.keys(s).forEach(function(k){if(s[k])done++;});});
   var stars=sg('stars_'+kid)||{};
-  if(done>=total){if(!stars[today]){stars[today]=true;ss('stars_'+kid,stars);celebrate(kid);}}
-  else{if(stars[today]){stars[today]=false;ss('stars_'+kid,stars);}}
+  if(done>=total){if(!stars[ds]){stars[ds]=true;ss('stars_'+kid,stars);if(ds===tday())celebrate(kid);else showRetroStar(kid,ds);}}
+  else{if(stars[ds]){stars[ds]=false;ss('stars_'+kid,stars);}}
   updateAW(kid);
   renderCal(p,kid);
 }
@@ -286,6 +333,13 @@ function celebrate(kid){
   var el=document.createElement('div');
   el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:'+col+';color:#fff;font-family:Fredoka One,cursive;font-size:48px;padding:40px 60px;border-radius:24px;z-index:9999;text-align:center;';
   el.innerHTML='Amazing, '+name+'!<br><span style="font-size:24px;">All chores done today!</span>';
+  document.body.appendChild(el);setTimeout(function(){el.remove();},2800);
+}
+function showRetroStar(kid,ds){
+  var col=kid==='olivia'?'#be185d':'#1d4ed8',name=kid==='olivia'?'Olivia':'Jack';
+  var el=document.createElement('div');
+  el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:'+col+';color:#fff;font-family:Fredoka One,cursive;font-size:36px;padding:32px 52px;border-radius:24px;z-index:9999;text-align:center;';
+  el.innerHTML='⭐ Star Earned!<br><span style="font-size:20px;">'+name+' gets a star for<br>'+fmtDate(ds)+'</span>';
   document.body.appendChild(el);setTimeout(function(){el.remove();},2800);
 }
 
@@ -317,30 +371,44 @@ function renderGrid(gid,cells,hcls,ccls){
   }
 }
 
-function renderTasks(lid,items,cls,reset,kid,total){
+function renderTasks(lid,items,cls,reset,kid,total,dateOverride){
   var ul=document.getElementById(lid);if(!ul)return;
   ul.innerHTML='';
-  var sk=lid+'__'+(reset==='weekly'?wkey():tday());
+  var ds=dateOverride||(reset==='weekly'?wkey():tday());
+  var sk=lid+'__'+(reset==='weekly'?wkeyFor(ds):ds);
   var stored=sg(sk)||{};
   for(var i=0;i<items.length;i++){
     var li=document.createElement('li'),chk=document.createElement('div'),span=document.createElement('span');
     chk.className='task-check '+cls+(stored[i]?' done':'');
     span.textContent=items[i];
     li.appendChild(chk);li.appendChild(span);ul.appendChild(li);
-    (function(idx,skey,k,tot,box){
+    (function(idx,skey,k,tot,box,dstr){
       box.addEventListener('click',function(){
         box.classList.toggle('done');
         var s=sg(skey)||{};s[idx]=box.classList.contains('done');ss(skey,s);
-        if(k&&tot)checkDone(k,tot);
+        if(k&&tot)checkDone(k,tot,dstr);
       });
-    })(i,sk,kid,total,chk);
+    })(i,sk,kid,total,chk,reset==='weekly'?null:ds);
+  }
+}
+
+function renderTasksForKid(kid){
+  var p=kid==='olivia'?'o':'j',ds=viewDate[kid];
+  if(kid==='olivia'){
+    renderTasks('o-daily',ODL,'o-chk','daily','olivia',OT,ds);
+    renderTasks('o-weekly',OWK,'o-chk','weekly',null,null,ds);
+    renderTasks('o-chores',OCH,'o-chk','daily','olivia',OT,ds);
+  } else {
+    renderTasks('j-daily',JDL,'j-chk','daily','jack',JT,ds);
+    renderTasks('j-weekly',JWK,'j-chk','weekly',null,null,ds);
+    renderTasks('j-chores',JCH,'j-chk','daily','jack',JT,ds);
   }
 }
 
 function renderCal(prefix,kid){
   var con=document.getElementById(prefix+'-calendar');if(!con)return;
   con.innerHTML='';
-  var stars=sg('stars_'+kid)||{},now=new Date(),yr=now.getFullYear(),mo=now.getMonth(),ts=tday();
+  var stars=sg('stars_'+kid)||{},now=new Date(),yr=now.getFullYear(),mo=now.getMonth(),ts=tday(),vd=viewDate[kid];
   ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d){var h=document.createElement('div');h.className='cal-day-header';h.textContent=d;con.appendChild(h);});
   var dim=new Date(yr,mo+1,0).getDate(),fd=new Date(yr,mo,1).getDay(),pd=new Date(yr,mo,0).getDate(),pf={};
   for(var d=1;d<=dim;d++){
@@ -353,10 +421,12 @@ function renderCal(prefix,kid){
   for(var i=0;i<fd;i++){var c=document.createElement('div');c.className='cal-day other-month';c.innerHTML='<span class="cal-day-num">'+(pd-fd+1+i)+'</span>';con.appendChild(c);}
   for(var d=1;d<=dim;d++){
     var ds=yr+'-'+pad(mo+1)+'-'+pad(d),c=document.createElement('div');
-    c.className='cal-day'+(ds===ts?' today':'');
+    var isToday=ds===ts,isViewing=ds===vd,isPast=ds<=ts;
+    c.className='cal-day'+(isToday?' today':'')+(isViewing&&!isToday?' viewing':'')+(isPast?' clickable':'');
     c.innerHTML='<span class="cal-day-num">'+d+'</span>';
     if(stars[ds]){var s=document.createElement('div');s.className='cal-star';s.textContent='★';c.appendChild(s);}
     if(pf[ds]){var b=document.createElement('div');b.className='cal-payday';b.textContent='Payday!';c.appendChild(b);}
+    if(isPast){(function(dateStr,kd){c.addEventListener('click',function(){setViewDate(kd,dateStr);});})(ds,kid);}
     con.appendChild(c);
   }
   var rem=(fd+dim)%7===0?0:7-(fd+dim)%7;
@@ -379,12 +449,10 @@ document.getElementById('o-allowance-input').value=loadAllowance('olivia',7).toF
 document.getElementById('j-allowance-input').value=loadAllowance('jack',4).toFixed(2);
 renderGrid('olivia-grid',OC,OH,OCC);
 renderGrid('jack-grid',JC,JH,JCC);
-renderTasks('o-daily',ODL,'o-chk','daily','olivia',OT);
-renderTasks('o-weekly',OWK,'o-chk','weekly',null,null);
-renderTasks('o-chores',OCH,'o-chk','daily','olivia',OT);
-renderTasks('j-daily',JDL,'j-chk','daily','jack',JT);
-renderTasks('j-weekly',JWK,'j-chk','weekly',null,null);
-renderTasks('j-chores',JCH,'j-chk','daily','jack',JT);
+renderDateNav('o','olivia');
+renderDateNav('j','jack');
+renderTasksForKid('olivia');
+renderTasksForKid('jack');
 renderCal('o','olivia');
 renderCal('j','jack');
 updateAW('olivia');
