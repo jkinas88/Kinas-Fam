@@ -265,8 +265,12 @@ var OCH = ["Set the table"];
 var JDL = ["Dress himself","Make bed","Family devotional","15 min summer workbook","Dirty clothes in hamper","Lay out clothes for tomorrow","Pick up room and toys","Clean up after meals","Bathe and brush teeth"];
 var JWK = ["Put away laundry","Vacuum a room"];
 var JCH = ["Bring mail inside","Feed fish"];
+var ODL_WD = {2:true}; // "15 min summer workbook" — weekday only
+var JDL_WD = {3:true}; // "15 min summer workbook" — weekday only
 var OT = ODL.length + OCH.length;
 var JT = JDL.length + JCH.length;
+function isWeekend(ds){var d=new Date(ds+'T00:00:00');return d.getDay()===0||d.getDay()===6;}
+function effectiveTotal(base,wdOnly,ds){if(!wdOnly||!isWeekend(ds))return base;return base-Object.keys(wdOnly).length;}
 var PZ = [{icon:"&#127906;",name:"Busch Gardens"},{icon:"&#127754;",name:"Ocean Breeze"},{icon:"&#128716;",name:"Sleep with Mommy"},{icon:"&#127852;",name:"Candy Store pick"},{icon:"&#9918;",name:"Tides Game"},{icon:"&#129495;",name:"Rock Climbing Gym"},{icon:"&#129336;",name:"Trampoline Park"},{icon:"&#127916;",name:"Movies"},{icon:"&#127856;",name:"Special Dessert"}];
 
 function pad(n){return String(n).padStart(2,'0');}
@@ -371,13 +375,14 @@ function renderGrid(gid,cells,hcls,ccls){
   }
 }
 
-function renderTasks(lid,items,cls,reset,kid,total,dateOverride){
+function renderTasks(lid,items,cls,reset,kid,total,dateOverride,wdOnly){
   var ul=document.getElementById(lid);if(!ul)return;
   ul.innerHTML='';
   var ds=dateOverride||(reset==='weekly'?wkey():tday());
   var sk=lid+'__'+(reset==='weekly'?wkeyFor(ds):ds);
-  var stored=sg(sk)||{};
+  var stored=sg(sk)||{},weekend=wdOnly&&isWeekend(ds);
   for(var i=0;i<items.length;i++){
+    if(weekend&&wdOnly[i])continue;
     var li=document.createElement('li'),chk=document.createElement('div'),span=document.createElement('span');
     chk.className='task-check '+cls+(stored[i]?' done':'');
     span.textContent=items[i];
@@ -395,13 +400,15 @@ function renderTasks(lid,items,cls,reset,kid,total,dateOverride){
 function renderTasksForKid(kid){
   var p=kid==='olivia'?'o':'j',ds=viewDate[kid];
   if(kid==='olivia'){
-    renderTasks('o-daily',ODL,'o-chk','daily','olivia',OT,ds);
+    var ot=effectiveTotal(OT,ODL_WD,ds);
+    renderTasks('o-daily',ODL,'o-chk','daily','olivia',ot,ds,ODL_WD);
     renderTasks('o-weekly',OWK,'o-chk','weekly',null,null,ds);
-    renderTasks('o-chores',OCH,'o-chk','daily','olivia',OT,ds);
+    renderTasks('o-chores',OCH,'o-chk','daily','olivia',ot,ds);
   } else {
-    renderTasks('j-daily',JDL,'j-chk','daily','jack',JT,ds);
+    var jt=effectiveTotal(JT,JDL_WD,ds);
+    renderTasks('j-daily',JDL,'j-chk','daily','jack',jt,ds,JDL_WD);
     renderTasks('j-weekly',JWK,'j-chk','weekly',null,null,ds);
-    renderTasks('j-chores',JCH,'j-chk','daily','jack',JT,ds);
+    renderTasks('j-chores',JCH,'j-chk','daily','jack',jt,ds);
   }
 }
 
